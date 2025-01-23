@@ -56,5 +56,10 @@ namespace BackendShop.BackShop.Controllers
         //    var admins = await accountsService.GetAllAdminsAsync();
         //    return Ok(admins);
         //}
+
+
+
+
+        ///////коментар
     }
 }
