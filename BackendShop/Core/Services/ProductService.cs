@@ -155,5 +155,18 @@ namespace BackendShop.Services
 
             throw new Exception("Зображення не завантажено");
         }
+        public async Task<List<ProductItemViewModel>> GetBySubCategoryIdAsync(int subCategoryId)
+        {
+            var products = await _context.Products
+                .Where(p => p.SubCategoryId == subCategoryId)
+                .ProjectTo<ProductItemViewModel>(_mapper.ConfigurationProvider) // Автоматичне мапінг DTO через AutoMapper
+                .ToListAsync();
+
+            if (!products.Any())
+                throw new Exception("Продуктів для цієї підкатегорії не знайдено");
+
+            return products;
+        }
+
     }
 }

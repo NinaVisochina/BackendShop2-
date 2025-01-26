@@ -56,6 +56,14 @@ namespace BackendShop.BackShop.Controllers
             var result = await _productService.UploadDescImageAsync(model);
             return Ok(result);
         }
+
+        [HttpGet("bySubCategory/{subCategoryId}")]
+        public async Task<IActionResult> GetBySubCategoryId(int subCategoryId)
+        {
+            var products = await _productService.GetBySubCategoryIdAsync(subCategoryId);
+            return Ok(products);
+        }
+
     }
 
     //[Route("api/[controller]")]
