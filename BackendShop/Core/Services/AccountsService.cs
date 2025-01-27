@@ -123,7 +123,22 @@ namespace BackendShop.Core.Services
             }
             await refreshTokenR.Save();
         }
+        public async Task<User> GetProfileAsync(string userId)
+        {
+            var user = await userManager.FindByIdAsync(userId);
 
+            if (user == null)
+                throw new HttpException("User not found.", HttpStatusCode.NotFound);
+
+            return new User
+            {
+                Firstname = user.Firstname,
+                Lastname = user.Lastname,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Birthdate = user.Birthdate
+            };
+        }
         //public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
         //{
         //    var users = await userManager.GetUsersInRoleAsync("User");

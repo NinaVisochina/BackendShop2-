@@ -1,4 +1,5 @@
 ﻿using BackendShop.Core.Dto;
+using BackendShop.Data.Entities;
 
 namespace BackendShop.Core.Interfaces
 {
@@ -11,5 +12,6 @@ namespace BackendShop.Core.Interfaces
         //Task<IEnumerable<UserDto>> GetAllAdminsAsync();
         Task<UserTokens> RefreshTokens(UserTokens tokens);
         Task RemoveExpiredRefreshTokens();
+        Task<User> GetProfileAsync(string userId);
     }
 }

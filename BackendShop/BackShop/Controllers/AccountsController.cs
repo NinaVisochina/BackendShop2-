@@ -1,9 +1,11 @@
 ﻿using BackendShop.Core.Dto;
 using BackendShop.Core.Interfaces;
 using BackendShop.Core.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
+using System.Security.Claims;
 
 namespace BackendShop.BackShop.Controllers
 {
@@ -42,6 +44,19 @@ namespace BackendShop.BackShop.Controllers
         {
             await accountsService.Logout(refreshToken);
             return Ok();
+        }
+
+        [HttpGet("profile")]
+        [Authorize]
+        public async Task<IActionResult> GetProfile()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userId == null)
+                return Unauthorized();
+
+            var userProfile = await accountsService.GetProfileAsync(userId);
+            return Ok(userProfile);
         }
         //[HttpGet("users")]
         //public async Task<IActionResult> GetAllUsers()
