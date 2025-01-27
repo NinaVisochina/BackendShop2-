@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BackendShop.Core.Dto;
+using BackendShop.Core.Dto.User;
 using BackendShop.Core.Exceptions;
 using BackendShop.Core.Interfaces;
 using BackendShop.Data.Entities;
@@ -139,6 +140,42 @@ namespace BackendShop.Core.Services
                 Birthdate = user.Birthdate
             };
         }
+
+        public async Task UpdateProfileAsync(string userId, UpdateProfileDto model)
+        {
+            var user = await userManager.FindByIdAsync(userId);
+
+            if (user == null)
+                throw new Exception("Користувача не знайдено");
+
+            // Оновлюємо дані користувача
+            user.Firstname = model.FirstName;
+            user.Lastname = model.LastName;
+            user.PhoneNumber = model.PhoneNumber;
+            user.Email = model.Email;
+
+            // Додайте валідацію для інших полів, якщо потрібно
+            if (!string.IsNullOrEmpty(model.Birthdate))
+            {
+                if (DateTime.TryParse(model.Birthdate, out var birthdate))
+                {
+                    user.Birthdate = birthdate;
+                }
+                else
+                {
+                    throw new Exception("Некоректний формат дати народження");
+                }
+            }
+
+            // Зберігаємо зміни
+            var result = await userManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
+            {
+                throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
+            }
+        }
+
         //public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
         //{
         //    var users = await userManager.GetUsersInRoleAsync("User");
