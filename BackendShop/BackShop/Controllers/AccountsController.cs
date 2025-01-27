@@ -1,5 +1,6 @@
 ﻿using BackendShop.Core.Dto;
 using BackendShop.Core.Dto.User;
+using BackendShop.Core.Exceptions;
 using BackendShop.Core.Interfaces;
 using BackendShop.Core.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -37,7 +38,22 @@ namespace BackendShop.BackShop.Controllers
         [HttpPost("refreshTokens")]
         public async Task<IActionResult> RefreshTokens(UserTokens tokens)
         {
-            return Ok(await accountsService.RefreshTokens(tokens));
+            try
+            {
+                Console.WriteLine($"Received refresh token: {tokens.RefreshToken}");
+                var newTokens = await accountsService.RefreshTokens(tokens);
+                return Ok(newTokens);
+            }
+            catch (HttpException ex)
+            {
+                Console.WriteLine($"Error during refresh: {ex.Message}");
+                return StatusCode((int)ex.StatusCode, new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Unexpected error: {ex.Message}");
+                return StatusCode(500, new { ex.Message });
+            }
         }
 
         [HttpDelete("logout")]

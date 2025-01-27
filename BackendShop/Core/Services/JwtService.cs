@@ -99,6 +99,8 @@ namespace BackendShop.Core.Services
 
         public bool IsRefreshTokenExpired(DateTime creationTime)
         {
+            var expirationDate = GetLastValidRefreshTokenDate();
+            Console.WriteLine($"Checking expiration: {creationTime} < {expirationDate}");
             return creationTime < GetLastValidRefreshTokenDate();
         }
     }
