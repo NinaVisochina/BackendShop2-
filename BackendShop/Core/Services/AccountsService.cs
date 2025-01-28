@@ -90,59 +90,59 @@ namespace BackendShop.Core.Services
 
         public async Task<UserTokens> RefreshTokens(UserTokens userTokens)
         {
-            // Розпарсити claims із протермінованого токена
-            var claims = jwtService.GetClaimsFromExpiredToken(userTokens.AccessToken);
-
-            // Знайти користувача через claims
-            var userId = claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
-            if (string.IsNullOrEmpty(userId))
-                throw new HttpException("Invalid access token.", HttpStatusCode.BadRequest);
-
-            var user = await userManager.FindByIdAsync(userId);
-
-            if (user == null)
-                throw new HttpException("User not found.", HttpStatusCode.NotFound);
-
-            // Перевірити рефреш-токен
-            var refreshToken = user.RefreshTokens.FirstOrDefault(rt => rt.Token == userTokens.RefreshToken);
-
-            if (refreshToken == null || jwtService.IsRefreshTokenExpired(refreshToken.CreationDate))
-                throw new HttpException("Invalid or expired refresh token.", HttpStatusCode.Unauthorized);
-
-            // Оновити рефреш-токен (якщо потрібно)
-            var newRefreshToken = jwtService.CreateRefreshToken();
-            refreshToken.Token = newRefreshToken;
-            refreshToken.CreationDate = DateTime.UtcNow;
-
-            await userManager.UpdateAsync(user);
-
-            // Створити новий access токен
-            var newAccessToken = jwtService.CreateToken(claims);
-
-            return new UserTokens
-            {
-                AccessToken = newAccessToken,
-                RefreshToken = newRefreshToken
-            };
-
-            //var refrestToken = (await refreshTokenR.Get(x => x.Token == userTokens.RefreshToken)).FirstOrDefault();
-            //if (refrestToken == null || jwtService.IsRefreshTokenExpired(refrestToken.CreationDate))
-            //    throw new HttpException("Invalid token.", HttpStatusCode.BadRequest);
+            //// Розпарсити claims із протермінованого токена
             //var claims = jwtService.GetClaimsFromExpiredToken(userTokens.AccessToken);
-            //var newAccessToken = jwtService.CreateToken(claims);
+
+            //// Знайти користувача через claims
+            //var userId = claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            //if (string.IsNullOrEmpty(userId))
+            //    throw new HttpException("Invalid access token.", HttpStatusCode.BadRequest);
+
+            //var user = await userManager.FindByIdAsync(userId);
+
+            //if (user == null)
+            //    throw new HttpException("User not found.", HttpStatusCode.NotFound);
+
+            //// Перевірити рефреш-токен
+            //var refreshToken = user.RefreshTokens.FirstOrDefault(rt => rt.Token == userTokens.RefreshToken);
+
+            //if (refreshToken == null || jwtService.IsRefreshTokenExpired(refreshToken.CreationDate))
+            //    throw new HttpException("Invalid or expired refresh token.", HttpStatusCode.Unauthorized);
+
+            //// Оновити рефреш-токен (якщо потрібно)
             //var newRefreshToken = jwtService.CreateRefreshToken();
-            //// update refresh token in db
-            //refrestToken.Token = newRefreshToken;
-            //refrestToken.CreationDate = DateTime.UtcNow;
-            //await refreshTokenR.Update(refrestToken);
-            //await refreshTokenR.Save();
-            //var tokens = new UserTokens()
+            //refreshToken.Token = newRefreshToken;
+            //refreshToken.CreationDate = DateTime.UtcNow;
+
+            //await userManager.UpdateAsync(user);
+
+            //// Створити новий access токен
+            //var newAccessToken = jwtService.CreateToken(claims);
+
+            //return new UserTokens
             //{
             //    AccessToken = newAccessToken,
             //    RefreshToken = newRefreshToken
             //};
-            //return tokens;
+
+            var refrestToken = (await refreshTokenR.Get(x => x.Token == userTokens.RefreshToken)).FirstOrDefault();
+            if (refrestToken == null || jwtService.IsRefreshTokenExpired(refrestToken.CreationDate))
+                throw new HttpException("Invalid token.", HttpStatusCode.BadRequest);
+            var claims = jwtService.GetClaimsFromExpiredToken(userTokens.AccessToken);
+            var newAccessToken = jwtService.CreateToken(claims);
+            var newRefreshToken = jwtService.CreateRefreshToken();
+            // update refresh token in db
+            refrestToken.Token = newRefreshToken;
+            refrestToken.CreationDate = DateTime.UtcNow;
+            await refreshTokenR.Update(refrestToken);
+            await refreshTokenR.Save();
+            var tokens = new UserTokens()
+            {
+                AccessToken = newAccessToken,
+                RefreshToken = newRefreshToken
+            };
+            return tokens;
         }
 
         public async Task RemoveExpiredRefreshTokens()
