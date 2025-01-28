@@ -1,4 +1,5 @@
 ﻿using BackendShop.Core.Interfaces;
+using BackendShop.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 [Route("api/[controller]")]
@@ -20,9 +21,15 @@ public class CartController : ControllerBase
     }
 
     [HttpPost("add")]
-    public async Task<IActionResult> AddToCart(string userId, int productId, int quantity)
+    public async Task<IActionResult> AddToCart([FromBody] AddToCartRequest request)
     {
-        await _cartService.AddToCartAsync(userId, productId, quantity);
+        Console.WriteLine($"Received userId: {request.UserId}, productId: {request.ProductId}, quantity: {request.Quantity}");
+        if (string.IsNullOrEmpty(request.UserId))
+        {
+            return Unauthorized("User is not authenticated");
+        }
+
+        await _cartService.AddToCartAsync(request.UserId, request.ProductId, request.Quantity);
         return NoContent();
     }
 }

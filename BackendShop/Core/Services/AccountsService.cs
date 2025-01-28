@@ -58,7 +58,8 @@ namespace BackendShop.Core.Services
             return new UserTokens
             {
                 AccessToken = jwtService.CreateToken(jwtService.GetClaims(user)),
-                RefreshToken = CreateRefreshToken(user.Id).Token
+                RefreshToken = CreateRefreshToken(user.Id).Token,
+                UserId = user.Id // Додаємо userId до відповіді
             };
         }
 
