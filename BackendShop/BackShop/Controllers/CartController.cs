@@ -21,15 +21,30 @@ public class CartController : ControllerBase
     }
 
     [HttpPost("add")]
-    public async Task<IActionResult> AddToCart([FromBody] AddToCartRequest request)
+    public async Task<IActionResult> AddToCart([FromBody] List<AddToCartRequest> request)
     {
-        Console.WriteLine($"Received userId: {request.UserId}, productId: {request.ProductId}, quantity: {request.Quantity}");
-        if (string.IsNullOrEmpty(request.UserId))
+        foreach (var item in request)
         {
-            return Unauthorized("User is not authenticated");
+            Console.WriteLine($"Received userId: {item.UserId}, productId: {item.ProductId}, quantity: {item.Quantity}");
+            if (string.IsNullOrEmpty(item.UserId))
+            {
+                return Unauthorized("User is not authenticated");
+            }
+
+            await _cartService.AddToCartAsync(item.UserId, item.ProductId, item.Quantity);
         }
 
-        await _cartService.AddToCartAsync(request.UserId, request.ProductId, request.Quantity);
         return NoContent();
     }
+    //public async Task<IActionResult> AddToCart([FromBody] AddToCartRequest request)
+    //{
+    //    Console.WriteLine($"Received userId: {request.UserId}, productId: {request.ProductId}, quantity: {request.Quantity}");
+    //    if (string.IsNullOrEmpty(request.UserId))
+    //    {
+    //        return Unauthorized("User is not authenticated");
+    //    }
+
+    //    await _cartService.AddToCartAsync(request.UserId, request.ProductId, request.Quantity);
+    //    return NoContent();
+    //}
 }
