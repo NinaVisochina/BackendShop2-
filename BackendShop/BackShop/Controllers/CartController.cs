@@ -21,9 +21,9 @@ public class CartController : ControllerBase
     }
 
     [HttpPost("add")]
-    public async Task<IActionResult> AddToCart([FromBody] List<AddToCartRequest> request)
+    public async Task<IActionResult> AddToCart([FromBody] List<AddToCartRequest> requests)
     {
-        foreach (var item in request)
+        foreach (var item in requests)
         {
             Console.WriteLine($"Received userId: {item.UserId}, productId: {item.ProductId}, quantity: {item.Quantity}");
             if (string.IsNullOrEmpty(item.UserId))
@@ -34,7 +34,7 @@ public class CartController : ControllerBase
             await _cartService.AddToCartAsync(item.UserId, item.ProductId, item.Quantity);
         }
 
-        return NoContent();
+        return Ok(new { message = "Items added to cart successfully" });
     }
     //public async Task<IActionResult> AddToCart([FromBody] AddToCartRequest request)
     //{
