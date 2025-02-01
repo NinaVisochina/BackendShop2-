@@ -55,10 +55,11 @@ namespace BackendShop.Core.Services
                 throw new HttpException("Invalid login or password.", HttpStatusCode.BadRequest);
 
             // generate access token... (JWT)
+            var entity = await CreateRefreshToken(user.Id);
             return new UserTokens
             {
                 AccessToken = jwtService.CreateToken(jwtService.GetClaims(user)),
-                RefreshToken = CreateRefreshToken(user.Id).Token,
+                RefreshToken = entity.Token,
                 UserId = user.Id // Додаємо userId до відповіді
             };
         }
@@ -72,7 +73,7 @@ namespace BackendShop.Core.Services
             await refreshTokenR.Save();
         }
 
-        private RefreshToken CreateRefreshToken(string userId)
+        private async Task<RefreshToken> CreateRefreshToken(string userId)
         {
             var refeshToken = jwtService.CreateRefreshToken();
 
@@ -83,8 +84,8 @@ namespace BackendShop.Core.Services
                 CreationDate = DateTime.UtcNow // Now vs UtcNow
             };
 
-            refreshTokenR.Insert(refreshTokenEntity);
-            refreshTokenR.Save();
+            await refreshTokenR.Insert(refreshTokenEntity);
+            await refreshTokenR.Save();
 
             return refreshTokenEntity;
         }
