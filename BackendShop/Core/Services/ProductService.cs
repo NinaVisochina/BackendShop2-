@@ -167,6 +167,23 @@ namespace BackendShop.Services
 
             return products;
         }
+        public async Task<List<ProductItemViewModel>> SearchProductsAsync(string query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                throw new ArgumentException("Пошуковий запит не може бути порожнім");
+            }
+
+            var products = await _context.Products
+                .Where(p => p.Name.Contains(query) || p.Description.Contains(query))
+                .ProjectTo<ProductItemViewModel>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            if (!products.Any())
+                throw new Exception("Жодного продукту не знайдено");
+
+            return products;
+        }
 
     }
 }

@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 using System.Security.Claims;
 
 namespace BackendShop.BackShop.Controllers
-{
+{   
     [Route("api/[controller]")]
     [ApiController]
     public class AccountsController : ControllerBase

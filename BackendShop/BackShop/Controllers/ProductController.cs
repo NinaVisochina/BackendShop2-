@@ -63,7 +63,12 @@ namespace BackendShop.BackShop.Controllers
             var products = await _productService.GetBySubCategoryIdAsync(subCategoryId);
             return Ok(products);
         }
-
+        [HttpGet("search")]
+        public async Task<IActionResult> Search([FromQuery(Name = "name")] string query)
+        {
+            var products = await _productService.SearchProductsAsync(query);
+            return Ok(products);
+        }
     }
 
     //[Route("api/[controller]")]

@@ -11,6 +11,7 @@ namespace BackendShop.Core.Interfaces
         Task DeleteAsync(int id);
         Task<ProductDescImageIdViewModel> UploadDescImageAsync(ProductDescImageUploadViewModel model);
         Task<List<ProductItemViewModel>> GetBySubCategoryIdAsync(int subCategoryId);
+        Task<List<ProductItemViewModel>> SearchProductsAsync(string query);
 
     }
 }
