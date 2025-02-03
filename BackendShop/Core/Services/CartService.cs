@@ -94,4 +94,27 @@ public class CartService : ICartService
             await _context.SaveChangesAsync();
         }
     }
+
+    public async Task UpdateCartItemQuantityAsync(string userId, int productId, int quantity)
+    {
+        var cart = await _context.Carts
+            .Include(c => c.Items)
+            .FirstOrDefaultAsync(c => c.UserId == userId);
+
+        if (cart != null)
+        {
+            var cartItem = cart.Items.FirstOrDefault(ci => ci.ProductId == productId);
+            if (cartItem != null)
+            {
+                cartItem.Quantity = quantity;
+                if (cartItem.Quantity <= 0)
+                {
+                    cart.Items.Remove(cartItem);
+                }
+                await _context.SaveChangesAsync();
+            }
+        }
+    }
+
+
 }

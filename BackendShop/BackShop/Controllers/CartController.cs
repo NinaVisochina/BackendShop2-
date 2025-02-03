@@ -40,4 +40,16 @@ public class CartController : ControllerBase
         return Ok();
     }
 
+    [HttpPatch("update-quantity")]
+    public async Task<IActionResult> UpdateCartItemQuantity([FromBody] AddToCartRequest request)
+    {
+        if (string.IsNullOrEmpty(request.UserId))
+        {
+            return Unauthorized("User is not authenticated");
+        }
+
+        await _cartService.UpdateCartItemQuantityAsync(request.UserId, request.ProductId, request.Quantity);
+        return Ok();
+    }
+
 }

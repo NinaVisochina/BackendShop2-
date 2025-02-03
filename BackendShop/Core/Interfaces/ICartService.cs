@@ -10,6 +10,7 @@ namespace BackendShop.Core.Interfaces
         Task AddToCartAsync(string userId, int productId, int quantity);
         Task RemoveFromCartAsync(string userId, int productId);
         Task ClearCartAsync(string userId);
+        Task UpdateCartItemQuantityAsync(string userId, int productId, int quantity);
         //Task<CartDto> GetCartAsync(string userId);
         //Task AddToCartAsync(string userId, CartItemDto cartItemDto);
         //Task RemoveFromCartAsync(string userId, int productId);
