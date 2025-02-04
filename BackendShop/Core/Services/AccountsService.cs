@@ -210,28 +210,14 @@ namespace BackendShop.Core.Services
             }
         }
 
-        //public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
-        //{
-        //    var users = await userManager.GetUsersInRoleAsync("User");
-        //    return users.Select(user => new UserDto
-        //    {
-        //        Id = user.UserId,
-        //        Firstname = user.Firstname,
-        //        Lastname = user.Lastname,
-        //        Email = user.Email
-        //    });
-        //}
+        public async Task<IEnumerable<User>> GetAllUsersAsync()
+        {
+            return await userManager.GetUsersInRoleAsync("User");
+        }
 
-        //public async Task<IEnumerable<UserDto>> GetAllAdminsAsync()
-        //{
-        //    var admins = await userManager.GetUsersInRoleAsync("Admin");
-        //    return admins.Select(admin => new UserDto
-        //    {
-        //        Id = admin.UserId,
-        //        Firstname = admin.Firstname,
-        //        Lastname = admin.Lastname,
-        //        Email = admin.Email
-        //    });
-        //}
+        public async Task<IEnumerable<User>> GetAllAdminsAsync()
+        {
+            return await userManager.GetUsersInRoleAsync("Admin");
+        }
     }
 }

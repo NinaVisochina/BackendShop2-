@@ -74,24 +74,24 @@ namespace BackendShop.BackShop.Controllers
             return Ok(new { message = "Профіль успішно оновлено" });
         }
 
-        //[HttpGet("users")]
-        //public async Task<IActionResult> GetAllUsers()
-        //{
-        //    var users = await accountsService.GetAllUsersAsync();
-        //    return Ok(users);
-        //}
+        [HttpGet("users")]
+        //[Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            var users = await accountsService.GetAllUsersAsync();
+            return Ok(users);
+        }
 
-        //[HttpGet("admins")]
-        //public async Task<IActionResult> GetAllAdmins()
-        //{
-        //    var admins = await accountsService.GetAllAdminsAsync();
-        //    return Ok(admins);
-        //}
+        [HttpGet("admins")]
+        //[Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAllAdmins()
+        {
+            var admins = await accountsService.GetAllAdminsAsync();
+            return Ok(admins);
+        }
 
 
 
 
-        ///////коментар
-        ///плюс коментар
     }
 }
