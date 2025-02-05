@@ -25,9 +25,17 @@ public class OrderService : IOrderService
                 Quantity = i.Quantity,
                 Price = i.Price
             }).ToList(),
-            DiscountId = orderDto.DiscountId
+            DiscountId = orderDto.DiscountId > 0 ? orderDto.DiscountId : null,
+            Address = orderDto.Address // Зберігаємо адресу
         };
-
+        if (order.DiscountId != null)
+        {
+            var discountExists = await _context.Discounts.AnyAsync(d => d.DiscountId == order.DiscountId);
+            if (!discountExists)
+            {
+                throw new Exception($"Discount with ID {order.DiscountId} does not exist.");
+            }
+        }
         _context.Orders.Add(order);
         await _context.SaveChangesAsync();
         return order.OrderId;

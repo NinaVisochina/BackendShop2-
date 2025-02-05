@@ -52,4 +52,11 @@ public class CartController : ControllerBase
         return Ok();
     }
 
+    [HttpDelete("clear/{userId}")]
+    public async Task<IActionResult> ClearCart(string userId)
+    {
+        await _cartService.ClearCartAsync(userId);
+        return Ok(new { message = "Cart has been cleared successfully" });
+    }
+
 }
