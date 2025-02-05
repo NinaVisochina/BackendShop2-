@@ -33,7 +33,14 @@ public class OrderController : ControllerBase
     [HttpGet("{userId}")]
     public async Task<IActionResult> GetUserOrders(string userId)
     {
+        if (string.IsNullOrEmpty(userId))
+            return BadRequest("UserId is required");
+
         var orders = await _orderService.GetUserOrdersAsync(userId);
+
+        if (!orders.Any())
+            return NotFound($"No orders found for user {userId}");
+
         var ordersDto = _mapper.Map<List<OrderDto>>(orders);
         return Ok(ordersDto);
     }

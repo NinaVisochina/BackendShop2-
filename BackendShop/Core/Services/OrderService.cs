@@ -45,6 +45,7 @@ public class OrderService : IOrderService
     {
         return await _context.Orders
             .Include(o => o.Items)
+            .ThenInclude(oi => oi.Product)
             .Where(o => o.UserId == userId)
             .ToListAsync();
     }
