@@ -171,19 +171,18 @@ namespace BackendShop.Services
         {
             if (string.IsNullOrWhiteSpace(query))
             {
-                throw new ArgumentException("Пошуковий запит не може бути порожнім");
+                return new List<ProductItemViewModel>(); // Повертаємо пустий список замість викидання винятку
             }
 
             var products = await _context.Products
-                .Where(p => p.Name.Contains(query) || p.Description.Contains(query))
+                .Where(p => p.Name.ToLower().Contains(query.ToLower()) ||
+                            p.Description.ToLower().Contains(query.ToLower())) // Робимо пошук нечутливим до регістру
                 .ProjectTo<ProductItemViewModel>(_mapper.ConfigurationProvider)
                 .ToListAsync();
 
-            if (!products.Any())
-                throw new Exception("Жодного продукту не знайдено");
-
-            return products;
+            return products; // Просто повертаємо пустий список, якщо нічого не знайдено
         }
+
 
     }
 }
