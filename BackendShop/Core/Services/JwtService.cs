@@ -30,6 +30,7 @@ namespace BackendShop.Core.Services
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
+
             var token = new JwtSecurityToken(
                 issuer: jwtOptions.Issuer,
                 claims: claims,
@@ -51,7 +52,8 @@ namespace BackendShop.Core.Services
                 claims.Add(new Claim(ClaimTypes.DateOfBirth, user.Birthdate.ToString()!));
 
             var roles = userManager.GetRolesAsync(user).Result;
-            claims.AddRange(roles.Select(role => new Claim(ClaimsIdentity.DefaultRoleClaimType, role)));
+            //claims.AddRange(roles.Select(role => new Claim(ClaimsIdentity.DefaultRoleClaimType, role)));
+            claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
             return claims;
         }

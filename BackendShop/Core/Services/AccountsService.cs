@@ -53,14 +53,30 @@ namespace BackendShop.Core.Services
 
             if (user == null || !await userManager.CheckPasswordAsync(user, model.Password))
                 throw new HttpException("Invalid login or password.", HttpStatusCode.BadRequest);
+            
 
+            var roles = await userManager.GetRolesAsync(user); // Отримуємо ролі користувача
+            //bool isAdmin = roles.Contains("Admin"); // Перевіряємо, чи є роль Admin
+            bool isAdmin = roles.Any(role => role.Equals("Admin", StringComparison.OrdinalIgnoreCase));
+
+
+            // Можна додати додатковий лог для перевірки ролей
+            Console.WriteLine($"User roles: {string.Join(", ", roles)}");
+
+            // Генеруємо access токен з ролями користувача
+            var claims = jwtService.GetClaims(user).ToList(); // Отримуємо claims для користувача
+            claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role))); // Додаємо ролі як claims
+            Console.WriteLine($"Claims before adding roles: {string.Join(", ", claims.Select(c => c.Type + ":" + c.Value))}");
+            var accessToken = jwtService.CreateToken(claims); // Створюємо токен з усіма claims
             // generate access token... (JWT)
             var entity = await CreateRefreshToken(user.Id);
+
             return new UserTokens
             {
-                AccessToken = jwtService.CreateToken(jwtService.GetClaims(user)),
+                AccessToken = accessToken,
                 RefreshToken = entity.Token,
-                UserId = user.Id // Додаємо userId до відповіді
+                UserId = user.Id, // Додаємо userId до відповіді
+                IsAdmin = isAdmin//повертати також поле isAdmin
             };
         }
 
@@ -129,16 +145,21 @@ namespace BackendShop.Core.Services
             //};
 
             var refrestToken = (await refreshTokenR.Get(x => x.Token == userTokens.RefreshToken)).FirstOrDefault();
+
             if (refrestToken == null || jwtService.IsRefreshTokenExpired(refrestToken.CreationDate))
                 throw new HttpException("Invalid token.", HttpStatusCode.BadRequest);
+
             var claims = jwtService.GetClaimsFromExpiredToken(userTokens.AccessToken);
             var newAccessToken = jwtService.CreateToken(claims);
             var newRefreshToken = jwtService.CreateRefreshToken();
+
             // update refresh token in db
             refrestToken.Token = newRefreshToken;
             refrestToken.CreationDate = DateTime.UtcNow;
+
             await refreshTokenR.Update(refrestToken);
             await refreshTokenR.Save();
+
             var tokens = new UserTokens()
             {
                 AccessToken = newAccessToken,
