@@ -16,7 +16,16 @@ namespace BackendShop.Core.MapperProfiles
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
                 .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items))
                 .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.Items.Sum(item => item.Price * item.Quantity)))
+                .ForMember(dest => dest.UserEmail, opt => opt.MapFrom(src => src.User.Email))
                 .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address)); // Мапінг для адреси
+
+            // Mapping from OrderDto to Order entity (for updating Order)
+            CreateMap<OrderDto, Order>()
+                .ForMember(dest => dest.OrderId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => (OrderStatus)Enum.Parse(typeof(OrderStatus), src.Status)))
+                .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items))
+                .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address));
 
             // Mapping from OrderItem entity to OrderItemDto
             CreateMap<OrderItem, OrderItemDto>()

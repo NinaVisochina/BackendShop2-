@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BackendShop.Core.Dto.Order;
+using BackendShop.Data.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 [Route("api/[controller]")]
@@ -66,11 +67,22 @@ public class OrderController : ControllerBase
     [HttpPut("{orderId}/status")]
     public async Task<IActionResult> UpdateOrderStatus(int orderId, [FromBody] UpdateOrderStatusDto statusDto)
     {
-        var success = await _orderService.UpdateOrderStatusAsync(orderId, statusDto.Status);
+        if (statusDto == null || !Enum.IsDefined(typeof(OrderStatus), statusDto.Status))
+        {
+            return BadRequest("Невірний статус замовлення.");
+        }
 
-        if (!success) return NotFound("Order not found");
+        var order = await _orderService.GetOrderByIdAsync(orderId);
+        if (order == null)
+        {
+            return NotFound("Замовлення не знайдено.");
+        }
 
-        return NoContent();
+        // Оновлюємо статус
+        order.Status = (OrderStatus)statusDto.Status;
+        await _orderService.UpdateOrderAsync(order);
+
+        return Ok("Статус замовлення успішно оновлено.");
     }
 }
 

@@ -64,17 +64,31 @@ public class OrderService : IOrderService
         return await _context.Orders
             .Include(o => o.Items)
             .ThenInclude(oi => oi.Product)
+            .Include(o => o.User)
             .ToListAsync();
     }
 
-    public async Task<bool> UpdateOrderStatusAsync(int orderId, OrderStatus status)
+    public async Task UpdateOrderStatusAsync(int orderId, UpdateOrderStatusDto statusDto)
     {
         var order = await _context.Orders.FirstOrDefaultAsync(o => o.OrderId == orderId);
-        if (order == null) return false;
+        if (order == null) return; // Order not found
 
-        order.Status = status;
+        // Перевіряємо, чи статус є дійсним значенням
+        if (Enum.IsDefined(typeof(OrderStatus), statusDto.Status))
+        {
+            order.Status = (OrderStatus)statusDto.Status;
+            await _context.SaveChangesAsync();
+        }
+        else
+        {
+            throw new ArgumentException("Invalid status value");
+        }
+    }
+
+    public async Task UpdateOrderAsync(Order order)
+    {
+        _context.Orders.Update(order);
         await _context.SaveChangesAsync();
-        return true;
     }
 
 }

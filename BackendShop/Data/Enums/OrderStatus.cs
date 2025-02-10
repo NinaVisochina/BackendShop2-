@@ -1,10 +1,17 @@
 ﻿namespace BackendShop.Data.Enums
 {
+    //public enum OrderStatus
+    //{
+    //    Pending,    // Очікується обробка
+    //    Processed,  // Оброблено
+    //    Delivered,  // Доставлено
+    //    Cancelled   // Скасовано
+    //}
     public enum OrderStatus
     {
-        Pending,   // Очікується обробка
-        Processed, // Оброблено
-        Delivered, // Доставлено
-        Cancelled  // Скасовано
+        Pending = 0,
+        Completed = 1,
+        Cancelled = 2,
+        Shipped = 3
     }
 }

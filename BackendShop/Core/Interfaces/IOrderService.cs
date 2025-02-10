@@ -7,8 +7,11 @@ public interface IOrderService
 {
     Task<int> CreateOrderAsync(CreateOrderDto orderDto);
     Task<IEnumerable<Order>> GetUserOrdersAsync(string userId);
-    Task<Order?> GetOrderByIdAsync(int orderId);    
-    Task<bool> UpdateOrderStatusAsync(int orderId, OrderStatus newStatus);  // Новий метод для зміни статусу замовлення
+    Task<Order?> GetOrderByIdAsync(int orderId);
+    //Task<bool> UpdateOrderStatusAsync(int orderId, OrderStatus newStatus); 
+    // Замість UpdateOrderAsync можна використати метод, який приймає DTO для зміни статусу
+    Task UpdateOrderStatusAsync(int orderId, UpdateOrderStatusDto statusDto);
+    Task UpdateOrderAsync(Order order); // Для інших оновлень замовлень
     Task<IEnumerable<Order>> GetAllOrdersAsync();      // Метод для отримання всіх замовлень
 }
 
