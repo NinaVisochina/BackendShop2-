@@ -1,6 +1,7 @@
 ﻿using BackendShop.Core.Dto.Order;
 using BackendShop.Data.Data;
 using BackendShop.Data.Entities;
+using BackendShop.Data.Enums;
 using Microsoft.EntityFrameworkCore;
 
 public class OrderService : IOrderService
@@ -57,4 +58,23 @@ public class OrderService : IOrderService
             .ThenInclude(oi => oi.Product)
             .FirstOrDefaultAsync(o => o.OrderId == orderId);
     }
+
+    public async Task<IEnumerable<Order>> GetAllOrdersAsync()
+    {
+        return await _context.Orders
+            .Include(o => o.Items)
+            .ThenInclude(oi => oi.Product)
+            .ToListAsync();
+    }
+
+    public async Task<bool> UpdateOrderStatusAsync(int orderId, OrderStatus status)
+    {
+        var order = await _context.Orders.FirstOrDefaultAsync(o => o.OrderId == orderId);
+        if (order == null) return false;
+
+        order.Status = status;
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
 }

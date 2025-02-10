@@ -54,5 +54,23 @@ public class OrderController : ControllerBase
         var orderDto = _mapper.Map<OrderDto>(order);
         return Ok(orderDto);
     }
+
+    [HttpGet("orders")]
+    public async Task<IActionResult> GetAllOrders()
+    {
+        var orders = await _orderService.GetAllOrdersAsync();
+        var ordersDto = _mapper.Map<List<OrderDto>>(orders);
+        return Ok(ordersDto);
+    }
+
+    [HttpPut("{orderId}/status")]
+    public async Task<IActionResult> UpdateOrderStatus(int orderId, [FromBody] UpdateOrderStatusDto statusDto)
+    {
+        var success = await _orderService.UpdateOrderStatusAsync(orderId, statusDto.Status);
+
+        if (!success) return NotFound("Order not found");
+
+        return NoContent();
+    }
 }
 
