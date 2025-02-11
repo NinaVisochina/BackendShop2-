@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using BackendShop.Core.Dto.Category;
+using BackendShop.Core.Dto.Product;
 using BackendShop.Core.Interfaces;
 using BackendShop.Data.Data;
 using BackendShop.Data.Entities;
@@ -84,6 +85,16 @@ namespace BackendShop.Services
             _context.Categories.Remove(entity);
             await _context.SaveChangesAsync();
         }
+        public async Task<List<ProductItemViewModel>> GetProductsByCategoryAsync(int id)
+        {
+            var products = await _context.Products
+                .Where(p => p.SubCategory.CategoryId == id) // Фільтрація за категорією через підкатегорії
+                .ProjectTo<ProductItemViewModel>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            return products;
+        }
+
     }
 }
 

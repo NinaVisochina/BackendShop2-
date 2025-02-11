@@ -1,4 +1,5 @@
 ﻿using BackendShop.Core.Dto.Category;
+using BackendShop.Core.Dto.Product;
 
 
 namespace BackendShop.Core.Interfaces
@@ -10,7 +11,8 @@ namespace BackendShop.Core.Interfaces
             Task CreateAsync(CategoryCreateDto model);
             Task EditAsync(CategoryEditDto model);
             Task DeleteAsync(int id);
-        
+            Task<List<ProductItemViewModel>> GetProductsByCategoryAsync(int id);
+
     }
 
 }
