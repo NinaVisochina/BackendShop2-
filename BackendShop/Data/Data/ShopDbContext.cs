@@ -22,6 +22,7 @@ namespace BackendShop.Data.Data
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<WishListItem> WishListItems { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

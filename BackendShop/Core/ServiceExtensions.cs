@@ -20,6 +20,7 @@ namespace BackendShop.Core
             services.AddScoped<ISubCategoryService, SubCategoryService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<ICartService, CartService>();
+            services.AddScoped<IWishListService, WishListService>();
 
             //services.AddScoped<IFileService, AzureBlobService>();
         }
