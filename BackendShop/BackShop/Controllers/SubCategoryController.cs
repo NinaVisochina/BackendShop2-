@@ -56,6 +56,14 @@ namespace BackendShop.BackShop.Controllers
             await _subCategoryService.DeleteAsync(id);
             return Ok();
         }
+        [HttpGet("slug/{slug}")]
+        public async Task<IActionResult> GetBySlug(string slug)
+        {
+            var subCategory = await _subCategoryService.GetBySlugAsync(slug);
+            if (subCategory == null) return NotFound();
+            return Ok(subCategory);
+        }
+
     }
 
     //[Route("api/[controller]")]

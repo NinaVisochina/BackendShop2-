@@ -1,4 +1,5 @@
-﻿using BackendShop.Core.Dto.Product;
+﻿using BackendShop.Core.Dto.Category;
+using BackendShop.Core.Dto.Product;
 
 namespace BackendShop.Core.Interfaces
 {
@@ -12,6 +13,8 @@ namespace BackendShop.Core.Interfaces
         Task<ProductDescImageIdViewModel> UploadDescImageAsync(ProductDescImageUploadViewModel model);
         Task<List<ProductItemViewModel>> GetBySubCategoryIdAsync(int subCategoryId);
         Task<List<ProductItemViewModel>> SearchProductsAsync(string query);
+        Task<ProductItemViewModel> GetBySlugAsync(string slug);
+
 
     }
 }

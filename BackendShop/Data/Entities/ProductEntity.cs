@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using BackendShop.Core.Services;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BackendShop.Data.Entities
@@ -8,6 +9,7 @@ namespace BackendShop.Data.Entities
     {
         [Key]
         public int Id { get; set; }
+        public string Slug { get; set; }
         [Required]
         public string Code { get; set; } = string.Empty;
 
@@ -37,5 +39,9 @@ namespace BackendShop.Data.Entities
         public SubCategory? SubCategory { get; set; }
         public virtual ICollection<ProductImageEntity>? ProductImages { get; set; }
         public virtual ICollection<ProductDescImageEntity>? ProductDescImages { get; set; }
+        public void GenerateSlug()
+        {
+            Slug = SlugService.GenerateSlug(Name);
+        }
     }
 }

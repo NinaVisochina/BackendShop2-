@@ -3,6 +3,7 @@
     public class EditSubCategoryDto
     {
         public int Id { get; set; }
+        public string Slug { get; set; }
         public string Name { get; set; } = string.Empty;
         public IFormFile? ImageSubCategory { get; set; } // Optional new image
         public int CategoryId { get; set; }

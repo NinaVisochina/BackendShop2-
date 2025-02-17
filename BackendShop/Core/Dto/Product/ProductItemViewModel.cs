@@ -6,7 +6,7 @@ namespace BackendShop.Core.Dto.Product
     public class ProductItemViewModel
     {
         public int Id { get; set; }
-
+        public string Slug { get; set; }
         public string Code { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
 

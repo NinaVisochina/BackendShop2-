@@ -12,6 +12,8 @@ namespace BackendShop.Core.Interfaces
             Task EditAsync(CategoryEditDto model);
             Task DeleteAsync(int id);
             Task<List<ProductItemViewModel>> GetProductsByCategoryAsync(int id);
+            Task<CategoryDto> GetBySlugAsync(string slug);
+
 
     }
 

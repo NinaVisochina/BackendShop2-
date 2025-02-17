@@ -69,6 +69,14 @@ namespace BackendShop.BackShop.Controllers
             var products = await _productService.SearchProductsAsync(query);
             return Ok(products);
         }
+        [HttpGet("slug/{slug}")]
+        public async Task<IActionResult> GetBySlug(string slug)
+        {
+            var product = await _productService.GetBySlugAsync(slug);
+            if (product == null) return NotFound();
+            return Ok(product);
+        }
+
     }
 
     //[Route("api/[controller]")]

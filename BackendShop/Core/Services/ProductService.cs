@@ -42,6 +42,7 @@ namespace BackendShop.Services
         public async Task CreateAsync(ProductCreateViewModel model)
         {
             var entity = _mapper.Map<ProductEntity>(model);
+            entity.GenerateSlug();
             _context.Products.Add(entity);
             await _context.SaveChangesAsync();
 
@@ -70,6 +71,7 @@ namespace BackendShop.Services
             }
         }
 
+
         public async Task EditAsync(ProductEditViewModel model)
         {
             var product = await _context.Products
@@ -78,6 +80,23 @@ namespace BackendShop.Services
 
             if (product == null) throw new Exception("Продукт не знайдено");
 
+            // Перевіряємо, чи змінилась назва продукту
+            if (product.Name != model.Name)
+            {
+                product.Name = model.Name;
+                product.GenerateSlug(); // Генеруємо новий Slug
+
+                // Перевіряємо, чи новий Slug вже існує
+                var existingSlug = await _context.Products
+                    .AnyAsync(p => p.Slug == product.Slug && p.Id != product.Id);
+
+                if (existingSlug)
+                {
+                    throw new Exception("Slug вже використовується. Оберіть іншу назву.");
+                }
+            }
+
+            // Оновлюємо інші поля продукту
             _mapper.Map(model, product);
 
             var oldNameImages = model.Images.Where(x => x.ContentType.Contains("old-image"))
@@ -116,6 +135,7 @@ namespace BackendShop.Services
 
             await _context.SaveChangesAsync();
         }
+
 
         public async Task DeleteAsync(int id)
         {
@@ -181,6 +201,13 @@ namespace BackendShop.Services
                 .ToListAsync();
 
             return products; // Просто повертаємо пустий список, якщо нічого не знайдено
+        }
+
+        public async Task<ProductItemViewModel> GetBySlugAsync(string slug)
+        {
+            var product = await _context.Products.FirstOrDefaultAsync(p => p.Slug == slug);
+            if (product == null) return null;
+            return _mapper.Map<ProductItemViewModel>(product);
         }
 
 
