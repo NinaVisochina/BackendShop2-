@@ -1,4 +1,6 @@
-﻿using BackendShop.Core.Interfaces;
+﻿using AutoMapper;
+using BackendShop.Core.Dto.WishList;
+using BackendShop.Core.Interfaces;
 using BackendShop.Data.Data;
 using BackendShop.Data.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -8,18 +10,24 @@ namespace BackendShop.Core.Services
     public class WishListService : IWishListService
     {
         private readonly ShopDbContext _context;
+        private readonly IMapper _mapper;
 
-        public WishListService(ShopDbContext context)
+        public WishListService(ShopDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        public async Task<List<WishListItem>> GetWishListAsync(string userId)
+        public async Task<List<WishListItemDto>> GetWishListAsync(string userId)
         {
-            return await _context.WishListItems
+            var wishList = await _context.WishListItems
                 .Include(w => w.Product)
+                .ThenInclude(p => p.ProductImages)
                 .Where(w => w.UserId == userId)
                 .ToListAsync();
+
+            // Використовуйте AutoMapper для перетворення
+            return _mapper.Map<List<WishListItemDto>>(wishList);
         }
 
         public async Task AddToWishListAsync(string userId, int productId)
@@ -40,7 +48,7 @@ namespace BackendShop.Core.Services
             }
         }
 
-        public async Task RemoveFromWishListAsync(string userId, int productId)
+        public async Task<bool> RemoveFromWishListAsync(string userId, int productId)
         {
             var item = await _context.WishListItems
                 .FirstOrDefaultAsync(w => w.UserId == userId && w.ProductId == productId);
@@ -49,7 +57,10 @@ namespace BackendShop.Core.Services
             {
                 _context.WishListItems.Remove(item);
                 await _context.SaveChangesAsync();
+                return true;
             }
+
+            return false; // Якщо елемента немає, повертається false
         }
     }
 }

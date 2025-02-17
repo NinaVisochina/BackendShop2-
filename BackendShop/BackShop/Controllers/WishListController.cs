@@ -14,12 +14,12 @@ namespace BackendShop.BackShop.Controllers
     public class WishListController : ControllerBase
     {
         private readonly ShopDbContext _context;
-        private readonly IWishListService _wishListService;
-        private readonly IMapper _mapper;
+        private readonly IWishListService _wishListService;        
 
         public WishListController(IWishListService wishListService)
         {
             _wishListService = wishListService;
+            
         }
 
         [HttpGet("{userId}")]
@@ -58,12 +58,18 @@ namespace BackendShop.BackShop.Controllers
         [HttpDelete("{productId}")]
         public async Task<IActionResult> RemoveFromWishList(int productId)
         {
-            var userId = User.FindFirst("sub")?.Value;
-            if (userId == null)
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Отримуємо userId з токена
+            if (string.IsNullOrEmpty(userId))
                 return Unauthorized();
 
-            await _wishListService.RemoveFromWishListAsync(userId, productId);
-            return Ok();
+            Console.WriteLine($"Attempting to remove product {productId} for user {userId}");
+
+            var result = await _wishListService.RemoveFromWishListAsync(userId, productId);
+
+            if (result)
+                return Ok(new { Message = "Product removed from the wishlist" });
+
+            return NotFound(new { Message = "Product not found in the wishlist" });
         }
     }
 }
